@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>editable的demo</title>
+    <script src="http://g.tbcdn.cn/kissy/k/1.3.0/kissy-min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="http://g.tbcdn.cn/kissy/k/1.3.0/css/dpl/base-min.css">
+    <link href="http://g.tbcdn.cn/kissy/k/1.3.2/editor/theme/cool/editor-min.css" rel="stylesheet"/>
+</head>
+<body>
+<h2>editable的demo</h2>
+<style type="text/css">
+    .demo {
+        border: 2px dashed #333;
+        margin: 10px;
+        padding: 10px;
+    }
+
+    #editorContainer {
+        display: none;
+    }
+</style>
+<div class="demo">
+    <h3>1、普通的click</h3>
+    <span id="test1">普通的click</span>
+</div>
+<div class="demo">
+    <h3>2、mouseenter时编辑，mouseout时完成编辑</h3>
+    <span id="test2">mouseenter</span>
+</div>
+<div class="demo">
+    <h3>3、使用textarea</h3>
+    <span id="test3">textarea</span>
+</div>
+<div class="demo">
+    <h3>4、使用自定义行为覆盖</h3>
+    <span id="test4">点击我会变成下拉框</span>
+</div>
+<div class="demo">
+    <h3>5、使用现有元素</h3>
+    <div id="editorContainer"></div>
+    <span id="test5">点击我会变成kissy编辑器</span>
+</div>
+<script>
+    var S = KISSY;
+    S.Config.debug = true;
+
+    if (S.Config.debug) {
+        var srcPath = "../../../";
+        S.config({
+            packages:[
+                {
+                    name:"gallery",
+                    path:srcPath,
+                    charset:"utf-8",
+                    ignorePackageNameInUri:true
+                }
+            ]
+        });
+    }
+
+    S.use('gallery/editable/1.0/index, dom, event, editor, editor/plugin/source-area/, editor/plugin/font-size/, editor/plugin/code/', function (S, Editable, D, E, Editor, SourceArea, FontSize, Code) {
+        new Editable('#test1');
+
+        new Editable('#test2', {
+            editEvent: 'mouseenter',
+            submitEvent: 'mouseout'
+        });
+
+        new Editable('#test3', {
+            type: 'textarea'
+        });
+
+        var editable1 = new Editable('#test4', {
+            editTarget: '<select><option>选择一项</option><option value="1">第一个选项</option><option value="2">第二个选项</option></select>'
+        });
+
+        editable1.on('targetReady', function(ev) {
+            //在target ready时绑定事件，其他时候取不到此editTarget，告诉组件如何返回新的值
+            E.on(ev.editTarget, 'change', function() {
+                editable1.submit('当前选择的是' + D.val(this));
+            });
+        });
+
+        //创建一个kissy editor
+        var editorDemo = new Editor({
+            // 是否初始聚焦
+            focused:true,
+            attachForm:true,
+            render:'#editorContainer',
+            width:'400px',
+            height:"200px",
+            plugins: [SourceArea, FontSize, Code]
+        }).render();
+
+        
+        var myEditable = new Editable('#test5', {
+            editTarget: '#editorContainer'
+        });
+
+        myEditable.on('targetReady', function(ev) {
+            //告诉组件何时完成编辑
+            editorDemo.on('blur', function() {
+                myEditable.submit(editorDemo.get('data'));
+            });
+        });
+
+        myEditable.on('beforeEdit', function(ev) {
+            //beforeEdit事件用于赋值
+            editorDemo.set('data', ev.oldValue);
+            editorDemo.focus();
+        });
+
+        myEditable.on('afterSubmit', function(ev) {
+            alert('newValue =>' + ev.newValue)
+        });
+
+    });
+</script>
+</body>
+</html>
