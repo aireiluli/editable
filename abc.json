@@ -1,9 +1,9 @@
 {
     "name": "editable",
     "version": "1.0",
-    "desc": "editable���",
+    "desc": "editable组件",
     "cover": "",
-    "tag":"",
+    "tag":"editable, 实时编辑",
     "author": {
         "name": "yuli",
         "email": "yuli.xc@taobao.com",

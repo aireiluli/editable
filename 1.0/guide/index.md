@@ -6,6 +6,11 @@ editable可以让一些元素变成可编辑的状态
 * 作者：kissy-team
 * demo：[http://gallery.kissyui.com/editable/1.0/demo/index.html](http://gallery.kissyui.com/editable/1.0/demo/index.html)
 
+## 组件特色
+
+* 支持任意自定义元素替换文本
+
+
 ## 初始化组件
 
 ```javascript
